@@ -16,27 +16,6 @@ import JSONInput from 'react-json-editor-ajrm';
 import locale from 'react-json-editor-ajrm/locale/en';
 
 
-
-
-const bookList = [
-    {
-        userName: 'eastlakeside',
-        repoName: 'interpy-zh',
-        banchName: 'master',
-        chapterPath: ['.', '__DIR__'],
-        tags: ['python'],
-        type: 'md',
-    },
-    {
-        userName: 'yidao620c',
-        repoName: 'python3-cookbook',
-        banchName: 'master',
-        chapterPath: ['source', '__DIR__'],
-        tags: ['python'],
-        type: 'rst', // ！rst格式的文档支持不够好
-    },
-]
-
 const styles = {
     appBar: {
         position: 'relative',
@@ -51,10 +30,14 @@ function Transition(props) {
 }
 
 class FullScreenDialog extends React.Component {
-    state = {
-        open: false,
-        config: []
-    };
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            open: false,
+            config: []
+        };
+    }
 
     handleClickOpen = () => {
         this.setState({ open: true });
@@ -70,6 +53,16 @@ class FullScreenDialog extends React.Component {
         })
     }
 
+
+    componentDidMount() {
+        let that = this
+        chrome.storage && chrome.storage.local.get(['sourceConfig'], function (result) {
+            console.log(result.sourceConfig);
+            that.setState({
+                config: result.sourceConfig
+            })
+        });
+    }
     save = () => {
         const { config } = this.state
         chrome.storage.local.set({ sourceConfig: config }, function () {
@@ -78,14 +71,6 @@ class FullScreenDialog extends React.Component {
         this.handleClose()
     }
 
-    componentDidMount() {
-        chrome.storage.local.get(['sourceConfig'], function (result) {
-            console.log('Value currently is ' + result.sourceConfig);
-            this.setState({
-                config: result.sourceConfig
-            })
-        });
-    }
     render() {
         const { classes } = this.props;
         const { config } = this.state
