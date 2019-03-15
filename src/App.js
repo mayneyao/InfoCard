@@ -8,8 +8,10 @@ import rst2mdown from 'rst2mdown';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import localforage from 'localforage';
 
 import Config from './components/config';
+import Source from './components/source';
 
 import 'highlight.js/styles/github.css';
 import './App.css';
@@ -21,26 +23,6 @@ const styles = theme => ({
     paddingBottom: theme.spacing.unit * 2,
   },
 });
-
-
-// const bookList = [
-//   {
-//     userName: 'eastlakeside',
-//     repoName: 'interpy-zh',
-//     banchName: 'master',
-//     chapterPath: ['.', '__DIR__'],
-//     tags: ['python'],
-//     type: 'md',
-//   },
-//   {
-//     userName: 'yidao620c',
-//     repoName: 'python3-cookbook',
-//     banchName: 'master',
-//     chapterPath: ['source', '__DIR__'],
-//     tags: ['python'],
-//     type: 'rst', // ！rst格式的文档支持不够好
-//   },
-// ]
 
 
 function randomOne(list) {
@@ -132,6 +114,7 @@ class App extends Component {
 
         <a href={url}> 在github中查看 </a>
         <Config />
+        <Source />
       </div>
     );
   }

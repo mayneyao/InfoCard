@@ -9,6 +9,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Checkbox from '@material-ui/core/Checkbox';
 import Avatar from '@material-ui/core/Avatar';
 import GitHub from 'github-api';
+import localforage from 'localforage';
 
 const styles = theme => ({
     root: {
@@ -19,60 +20,75 @@ const styles = theme => ({
 });
 
 class CheckboxListSecondary extends React.Component {
-    state = {
-        checked: [1],
-    };
 
-    handleToggle = value => () => {
-        const { checked } = this.state;
-        const currentIndex = checked.indexOf(value);
-        const newChecked = [...checked];
+    constructor(props) {
+        super(props)
+        this.state = {
+            books: {}
+        };
+    }
 
-        if (currentIndex === -1) {
-            newChecked.push(value);
-        } else {
-            newChecked.splice(currentIndex, 1);
-        }
-
-        this.setState({
-            checked: newChecked,
-        });
-    };
-
-
-    componentDidMount(){
-        // 获取已经配置好的开源图书信息
-        const gh = new GitHub()
-        const sourceRepo = gh.getRepo('mayneyao', 'InfoCard')
-        sourceRepo.getSha('dev','source.json').then(res=>{
-            sourceRepo.getBlob(res.sha).then(res=>{
-                console.log(res.data)
+    handleToggle = (key) => {
+        const { books } = this.state;
+        localforage.getItem('books').then(books=>{
+            books[key].checked= !books[key].checked
+            localforage.setItem('books',books).then(res=>{
+                console.log(res)
+                this.setState({books:res})
             })
+        })
+    };
+
+
+    componentDidMount() {
+        // 获取已经配置好的开源图书信息
+        localforage.getItem('books').then(books=>{
+            if (books){
+                this.setState({books})
+            }else{
+                const gh = new GitHub()
+                const sourceRepo = gh.getRepo('mayneyao', 'InfoCard')
+                sourceRepo.getSha('dev', 'src/source.json').then(res => {
+                    sourceRepo.getBlob(res.data.sha).then(res => {
+                        localforage.setItem('books',res.data)
+                        this.setState({
+                            books: res.data
+                        })
+                    })
+                })
+            }
         })
     }
 
     render() {
         const { classes } = this.props;
+        const { books } = this.state;
+
 
         return (
             <List dense className={classes.root}>
-                {[0, 1, 2, 3].map(value => (
-                    <ListItem key={value} button>
-                        <ListItemAvatar>
+                {Object.entries(books).map(item=>{
+                    let [key,book] = item
+
+                    let [userName,repoName,branchName] = key.split('/')
+                    return (
+                        <ListItem key={key} button>
+                        {/* <ListItemAvatar>
                             <Avatar
-                                alt={`Avatar n°${value + 1}`}
-                                src={`/static/images/avatar/${value + 1}.jpg`}
+                                alt={`Avatar n°${book + 1}`}
+                                src={`/static/images/avatar/${book + 1}.jpg`}
                             />
-                        </ListItemAvatar>
-                        <ListItemText primary={`Line item ${value + 1}`} />
+                        </ListItemAvatar> */}
+                        <ListItemText primary={book.name} />
                         <ListItemSecondaryAction>
                             <Checkbox
-                                onChange={this.handleToggle(value)}
-                                checked={this.state.checked.indexOf(value) !== -1}
+                                onChange={()=>this.handleToggle(key)}
+                                checked={book.checked}
                             />
                         </ListItemSecondaryAction>
                     </ListItem>
-                ))}
+                    )
+                })}
             </List>
         );
     }
