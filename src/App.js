@@ -103,43 +103,43 @@ class App extends Component {
       if (!bookData) {
         // 初始化应用时
         this.initBookData()
-      }
-
-      books = Object.entries(res).map(item => {
-        let [key, book] = item
-        let [userName, repoName, branchName] = key.split('/')
-        if (book.checked) {
-          return {
-            userName,
-            repoName,
-            branchName,
-            ...book
+      } else {
+        books = Object.entries(res).map(item => {
+          let [key, book] = item
+          let [userName, repoName, branchName] = key.split('/')
+          if (book.checked) {
+            return {
+              userName,
+              repoName,
+              branchName,
+              ...book
+            }
           }
-        }
-      }).filter(item => Boolean(item))
-      console.log(books)
-      let bookInfo = randomOne(books)
-      console.log(bookInfo)
-      const { userName, repoName, banchName, chapterPath, type } = bookInfo
-      const bookRepo = gh.getRepo(userName, repoName)
+        }).filter(item => Boolean(item))
+        console.log(books)
+        let bookInfo = randomOne(books)
+        console.log(bookInfo)
+        const { userName, repoName, banchName, chapterPath, type } = bookInfo
+        const bookRepo = gh.getRepo(userName, repoName)
 
-      that.setState({
-        book: bookInfo
-      }, () => {
-        // 获取书籍任一章节
-        bookRepo.getSha(banchName, chapterPath[0]).then(res => {
-          if (chapterPath.length === 2) {
-            // 
-            let allCha = res.data.filter(item => item.size === 0)
-            let randomCha = randomOne(allCha)
-            bookRepo.getSha(banchName, randomCha.path).then(res => {
+        that.setState({
+          book: bookInfo
+        }, () => {
+          // 获取书籍任一章节
+          bookRepo.getSha(banchName, chapterPath[0]).then(res => {
+            if (chapterPath.length === 2) {
+              // 
+              let allCha = res.data.filter(item => item.size === 0)
+              let randomCha = randomOne(allCha)
+              bookRepo.getSha(banchName, randomCha.path).then(res => {
+                that.getRandomSection(bookRepo, res.data, type)
+              })
+            } else {
               that.getRandomSection(bookRepo, res.data, type)
-            })
-          } else {
-            that.getRandomSection(bookRepo, res.data, type)
-          }
+            }
+          })
         })
-      })
+      }
     })
   }
 
