@@ -1,68 +1,102 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+你好呀旅行者~ 欢迎使用 InfoCard！
 
-## Available Scripts
+你之所以看到这个卡片，是因为我们第一次相见。
 
-In the project directory, you can run:
+请阅读此卡片，它会引导你如何使用 InfoCard
 
-### `npm start`
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## InfoCard是什么
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+每次打开此应用（Web页面 或 Chrome 扩展）时，InfoCard 会从 github 的开源图书中随机获取一个章节展示。
 
-### `npm test`
+你可以用零碎的时间阅读，这并不会花费你很多的时间，但是你可以从中学到很多。
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+## 设置图书源
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+打开右下角的设置按钮，可以设置图书源
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+每次打开页面时，InfoCard 会从你勾选的图书源中随机选中一本，然后从选中的书中随机挑选一个章节展示。
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+## 更新图书源
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+更新图书源时，InfoCard会从本仓库的 `src/source.json` 中获取最新的数据。然后与已有数据对比，合并更新。
+你的偏好（勾选的图书信息）设置，不会丢失。
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## 提交图书源
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+默认的信息源，来自此项目仓库中维护的开源图书。
 
-## Learn More
+你可以向此仓库提交PR，与他人分享你想看的开源图书。
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 图书源配置说明
 
-### Code Splitting
+你可以参考下面的说明，提交新的图书源。
+例
+```javascript
+{
+    "eastlakeside/interpy-zh/master": {
+        "name": "python进阶",
+        "chapterPath": [
+            ".",
+            "__DIR__"
+        ],
+        "tags": [
+            "python"
+        ],
+        "type": "md"
+    },
+}  
+```
+说明
+```javascript
+{
+    "<username>/<repo>/<branch>": {
+        "name": "图书名称",
+        "chapterPath": [
+            ".", //图书章节的父级目录
+            "__DIR__" // 如果图书存在章目录保留这个标记，具体解释参考下方关于章节的说明
+        ],
+        "tags": [
+            "python" // 展示在卡片上方的tag，帮助阅读者快速了解此图书的概要
+        ],
+        "type": "md" // 开源图书采用何种文件格式组织，目前对md支持良好，rst的解析存在一定的问题。
+    },
+}  
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+### 关于章节的说明
 
-### Analyzing the Bundle Size
+一般开源图书的组织格式
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+```
+book
+    第一章
+        第一节.md
+        第二节.md
+    第二章
+        第一节.md
+        第二节.md
+```
+对应的 `chapterPath`
 
-### Making a Progressive Web App
+```
+["book","__DIR__"]
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+不存在二级目录的组织格式，例如
+```
+book
+    第一节.md
+    第二节.md
+    第三节.md
+    第四节.md
+```
+对应的 `chapterPath`
 
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+```
+["book"]
+```
