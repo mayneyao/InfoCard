@@ -1,8 +1,6 @@
-[
-    {
-        "userName": "eastlakeside",
-        "repoName": "interpy-zh",
-        "banchName": "master",
+{
+    "eastlakeside/interpy-zh/master": {
+        "name": "python进阶",
         "chapterPath": [
             ".",
             "__DIR__"
@@ -12,10 +10,8 @@
         ],
         "type": "md"
     },
-    {
-        "userName": "yidao620c",
-        "repoName": "python3-cookbook",
-        "banchName": "master",
+    "yidao620c/python3-cookbook/master": {
+        "name": "Python3 CookBook",
         "chapterPath": [
             "source",
             "__DIR__"
@@ -25,4 +21,4 @@
         ],
         "type": "rst"
     }
-]
+}
