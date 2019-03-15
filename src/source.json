@@ -2,7 +2,7 @@
     "mayneyao/InfoCard/dev-web": {
         "name": "InfoCard使用说明",
         "chapterPath": [
-            "."
+            "doc"
         ],
         "tags": [],
         "checked": true,
