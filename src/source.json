@@ -1,4 +1,13 @@
 {
+    "mayneyao/InfoCard/dev-web": {
+        "name": "InfoCard使用说明",
+        "chapterPath": [
+            "."
+        ],
+        "tags": [],
+        "checked": true,
+        "type": "md"
+    },
     "eastlakeside/interpy-zh/master": {
         "name": "python进阶",
         "chapterPath": [
