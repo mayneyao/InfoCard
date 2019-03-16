@@ -29,5 +29,15 @@
             "python"
         ],
         "type": "rst"
+    },
+    "ruter/ruter.github.io/master":{
+        "name": "Ruter的博客",
+        "chapterPath": [
+            "_posts"
+        ],
+        "tags": [
+            "python"
+        ],
+        "type": "md"
     }
 }
