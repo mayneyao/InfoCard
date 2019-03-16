@@ -1,5 +1,3 @@
-/*global chrome*/
-
 import React, { Component } from 'react';
 import GitHub from 'github-api';
 import Markdown from 'react-markdown';
@@ -11,7 +9,6 @@ import Typography from '@material-ui/core/Typography';
 import localforage from 'localforage';
 
 import Config from './components/config';
-
 import Tag from './components/hashColorTag';
 
 import 'highlight.js/styles/github.css';
@@ -30,9 +27,7 @@ const styles = theme => ({
 
 
 function randomOne(list) {
-  console.log(list)
   let randomIndex = getRandomInt(list.length - 1)
-  console.log(randomIndex)
   return list[randomIndex]
 }
 
@@ -53,14 +48,11 @@ class App extends Component {
     }
   }
 
-
   getRandomSection = (bookRepo, listOfSection, type) => {
     if (!listOfSection) {
       window.location.reload()
     }
     let randomP = randomOne(listOfSection.filter(item => item.name.endsWith(`.${type}`)))
-
-    console.log(randomP)
     bookRepo.getBlob(randomP.sha).then(res => {
       this.setState({
         'url': randomP.html_url,
@@ -80,66 +72,65 @@ class App extends Component {
 
 
   // 初始化图书源
-  initBookData = () => {
+  async initBookData() {
     const gh = new GitHub()
     const sourceRepo = gh.getRepo('mayneyao', 'InfoCard')
-    sourceRepo.getSha('dev-web', 'src/source.json').then(res => {
-      sourceRepo.getBlob(res.data.sha).then(res => {
-        localforage.setItem('books', res.data).then(res => {
-          window.location.reload()
-        })
-      })
-    })
+    const res = await sourceRepo.getSha('dev-web', 'src/source.json')
+    const content = await sourceRepo.getBlob(res.data.sha)
+    const bookData = await localforage.setItem('books', content.data)
+    return bookData
   }
 
-  componentDidMount() {
+
+  bookDict2List = (bookData) => {
+    return Object.entries(bookData).map(item => {
+      let [key, book] = item
+      let [userName, repoName, branchName] = key.split('/')
+      if (book.checked) {
+        return {
+          userName,
+          repoName,
+          branchName,
+          ...book
+        }
+      }
+    }).filter(item => Boolean(item))
+  }
+
+  async componentDidMount() {
     const gh = new GitHub()
     let that = this
 
     let books = []
-    localforage.getItem('books').then(res => {
+    let bookData = await localforage.getItem('books') || await this.initBookData()
+    bookData = await localforage.getItem('books')
+    books = this.bookDict2List(bookData)
+    // 一本书都没勾选时的处理
+    if (!books.length) {
+      // 初始化数据，保证始终有一本书可选
+      bookData = await this.initBookData()
+    }
+    books = this.bookDict2List(bookData)
+    let bookInfo = randomOne(books)
+    const { userName, repoName, branchName, chapterPath, type } = bookInfo
+    const bookRepo = gh.getRepo(userName, repoName)
 
-      let bookData = res
-      if (!bookData) {
-        // 初始化应用时
-        this.initBookData()
-      } else {
-        books = Object.entries(res).map(item => {
-          let [key, book] = item
-          let [userName, repoName, branchName] = key.split('/')
-          if (book.checked) {
-            return {
-              userName,
-              repoName,
-              branchName,
-              ...book
-            }
-          }
-        }).filter(item => Boolean(item))
-        console.log(books)
-        let bookInfo = randomOne(books)
-        console.log(bookInfo)
-        const { userName, repoName, banchName, chapterPath, type } = bookInfo
-        const bookRepo = gh.getRepo(userName, repoName)
-
-        that.setState({
-          book: bookInfo
-        }, () => {
-          // 获取书籍任一章节
-          bookRepo.getSha(banchName, chapterPath[0]).then(res => {
-            if (chapterPath.length === 2) {
-              // 
-              let allCha = res.data.filter(item => item.size === 0)
-              let randomCha = randomOne(allCha)
-              bookRepo.getSha(banchName, randomCha.path).then(res => {
-                that.getRandomSection(bookRepo, res.data, type)
-              })
-            } else {
-              that.getRandomSection(bookRepo, res.data, type)
-            }
+    that.setState({
+      book: bookInfo
+    }, () => {
+      // 获取书籍任一章节
+      bookRepo.getSha(branchName, chapterPath[0]).then(res => {
+        if (chapterPath.length === 2) {
+          // 
+          let allCha = res.data.filter(item => item.size === 0)
+          let randomCha = randomOne(allCha)
+          bookRepo.getSha(branchName, randomCha.path).then(res => {
+            that.getRandomSection(bookRepo, res.data, type)
           })
-        })
-      }
+        } else {
+          that.getRandomSection(bookRepo, res.data, type)
+        }
+      })
     })
   }
 
@@ -153,7 +144,6 @@ class App extends Component {
     }
     let mdSource = parseFunc[type](text)
 
-    console.log(Loading)
     return (
       <div className="App">
         {
@@ -164,7 +154,7 @@ class App extends Component {
               <div style={{ display: 'flex', marginTop: '2em' }}>
                 <Tag tag={book.name} />
                 {
-                  book.tags && book.tags.map(item => <Tag tag={item} />)
+                  book.tags && book.tags.map(item => <Tag tag={item} key={item} />)
                 }
                 <div style={{
                   background: '#fff',
@@ -184,7 +174,7 @@ class App extends Component {
               </div>
 
               <Paper className={classes.root} elevation={1}>
-                <Typography component="p">
+                <Typography component="div">
                   <Markdown source={mdSource} escapeHtml={false} />
                 </Typography>
               </Paper>
