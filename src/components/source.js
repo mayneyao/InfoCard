@@ -32,8 +32,6 @@ class CheckboxListSecondary extends React.Component {
 
     pullBookSourceFromGithub = () => {
         // 获取源数据
-
-
         this.setState({
             loading: true
         }, () => {
@@ -66,11 +64,9 @@ class CheckboxListSecondary extends React.Component {
     }
 
     handleToggle = (key) => {
-        const { books } = this.state;
         localforage.getItem('books').then(books => {
             books[key].checked = !books[key].checked
             localforage.setItem('books', books).then(res => {
-                console.log(res)
                 this.setState({ books: res })
             })
         })

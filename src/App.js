@@ -44,7 +44,8 @@ class App extends Component {
       'text': '',
       'type': 'md',
       'url': '',
-      'loading': true
+      'loading': true,
+      'isFetchDataOk': false
     }
   }
 
@@ -53,21 +54,29 @@ class App extends Component {
       window.location.reload()
     }
     let randomP = randomOne(listOfSection.filter(item => item.name.endsWith(`.${type}`)))
-    bookRepo.getBlob(randomP.sha).then(res => {
+    if (!randomP) {
       this.setState({
-        'url': randomP.html_url,
-        'text': res.data,
-        'type': type,
+        'isFetchDataOk': false,
         'loading': false
-      }, () => {
-        let els = document.querySelectorAll('pre code');
-        for (let i = 0; i < els.length; i++) {
-          if (!els[i].classList.contains('hljs')) {
-            hljs.highlightBlock(els[i]);
-          }
-        }
       })
-    })
+    } else {
+      bookRepo.getBlob(randomP.sha).then(res => {
+        this.setState({
+          'isFetchDataOk': true,
+          'url': randomP.html_url,
+          'text': res.data,
+          'type': type,
+          'loading': false
+        }, () => {
+          let els = document.querySelectorAll('pre code');
+          for (let i = 0; i < els.length; i++) {
+            if (!els[i].classList.contains('hljs')) {
+              hljs.highlightBlock(els[i]);
+            }
+          }
+        })
+      })
+    }
   }
 
 
@@ -97,7 +106,7 @@ class App extends Component {
     }).filter(item => Boolean(item))
   }
 
-  async componentDidMount() {
+  async fetchData() {
     const gh = new GitHub()
     let that = this
 
@@ -119,24 +128,42 @@ class App extends Component {
       book: bookInfo
     }, () => {
       // 获取书籍任一章节
-      bookRepo.getSha(branchName, chapterPath[0]).then(res => {
-        if (chapterPath.length === 2) {
-          // 
-          let allCha = res.data.filter(item => item.size === 0)
-          let randomCha = randomOne(allCha)
-          bookRepo.getSha(branchName, randomCha.path).then(res => {
-            that.getRandomSection(bookRepo, res.data, type)
-          })
-        } else {
-          that.getRandomSection(bookRepo, res.data, type)
-        }
-      })
+      try {
+        bookRepo.getSha(branchName, chapterPath[0]).then(res => {
+          if (res.status === 200) {
+            if (chapterPath.length === 2) {
+              // 
+              let allCha = res.data.filter(item => item.size === 0)
+              let randomCha = randomOne(allCha)
+              bookRepo.getSha(branchName, randomCha.path).then(res => {
+                that.getRandomSection(bookRepo, res.data, type)
+              })
+            } else {
+              that.getRandomSection(bookRepo, res.data, type)
+            }
+          } else if (res.status === 403) {
+            this.setState({
+              'fetchDataMsg': '刷新过于频繁请稍后再试',
+              'isFetchDataOk': false,
+              'loading': false
+            })
+          }
+        })
+      } catch{
+        this.setState({
+          'isFetchDataOk': false,
+          'loading': false
+        })
+      }
     })
+  }
+  componentDidMount() {
+    this.fetchData()
   }
 
   render() {
     const { classes } = this.props
-    const { text, type, url, book, loading } = this.state
+    const { text, type, url, book, loading, isFetchDataOk, fetchDataMsg } = this.state
 
     let parseFunc = {
       rst: (t) => rst2mdown(t),
@@ -149,37 +176,38 @@ class App extends Component {
         {
           loading ? <div style={{ display: 'flex', alignItems: 'center', width: '100%', height: '100%' }}>
             <img src={Loading} style={{ margin: '0 auto' }} />
-          </div> : <div>
+          </div> : isFetchDataOk ?
+              <div>
+                <div style={{ display: 'flex', marginTop: '2em' }}>
+                  <Tag tag={book.name} />
+                  {
+                    book.tags && book.tags.map(item => <Tag tag={item} key={item} />)
+                  }
+                  <div style={{
+                    background: '#fff',
+                    color: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexShrink: 0,
+                    height: '24px',
+                    borderRadius: '3px',
+                    paddingLeft: '8px',
+                    paddingRight: '8px',
+                    fontSize: '14px',
+                    lineHeight: '120%',
+                    fontWeight: '400',
+                    margin: '0px 6px 6px 0px',
+                  }}><a href={url} target="_blank"> 在github中查看 </a></div>
+                </div>
 
-              <div style={{ display: 'flex', marginTop: '2em' }}>
-                <Tag tag={book.name} />
-                {
-                  book.tags && book.tags.map(item => <Tag tag={item} key={item} />)
-                }
-                <div style={{
-                  background: '#fff',
-                  color: '#fff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  flexShrink: 0,
-                  height: '24px',
-                  borderRadius: '3px',
-                  paddingLeft: '8px',
-                  paddingRight: '8px',
-                  fontSize: '14px',
-                  lineHeight: '120%',
-                  fontWeight: '400',
-                  margin: '0px 6px 6px 0px',
-                }}><a href={url} target="_blank"> 在github中查看 </a></div>
+                <Paper className={classes.root} elevation={1}>
+                  <Typography component="div">
+                    <Markdown source={mdSource} escapeHtml={false} />
+                  </Typography>
+                </Paper>
+                <Config />
               </div>
-
-              <Paper className={classes.root} elevation={1}>
-                <Typography component="div">
-                  <Markdown source={mdSource} escapeHtml={false} />
-                </Typography>
-              </Paper>
-              <Config />
-            </div>
+              : <div> {fetchDataMsg ? fetchDataMsg : `oops~,something wrong!`}<span onClick={this.fetchData}>reload</span></div>
         }
       </div>
     );
