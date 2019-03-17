@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
   "name": "InfoCard",
-  "version": "1.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "Infocard 是一款chrome 扩展，在你每次打开新标签栏的时候展示知识卡片, 利用零碎的时间学习知识。",
   "icons": {
     "16": "favicon.ico"
   },

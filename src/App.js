@@ -7,14 +7,11 @@ import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import localforage from 'localforage';
-
 import Config from './components/config';
 import Tag from './components/hashColorTag';
+import Loading from './loading.svg'
 
 import 'highlight.js/styles/github.css';
-import './App.css';
-
-import Loading from './index.svg'
 
 const styles = theme => ({
   root: {

@@ -11,7 +11,7 @@ code {
 }
 
 html, body, #root {
-  height: 100%
+  height: 98%
 }
 
 html {
@@ -21,4 +21,15 @@ html {
 a {
   text-decoration: none;
   color: #009688
+}
+
+html body {
+  background: #f3f5f7;
+  font-size: 100%!important;
+}
+
+.App {
+  height: 98%;
+  max-width: 900px;
+  margin: 0 auto;
 }
