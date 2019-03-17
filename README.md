@@ -11,6 +11,8 @@
 
 你可以用零碎的时间阅读，这并不会花费你很多的时间，但是你可以从中学到很多。
 
+了解 idea&roadmap，参见：https://www.notion.so/gine/Infocard-23c0599b46ce426ab39d24094dd7327a
+
 
 ## 设置图书源
 
