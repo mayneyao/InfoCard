@@ -112,7 +112,6 @@ class App extends Component {
 
     let books = []
     let bookData = await localforage.getItem('books') || await this.initBookData()
-    bookData = await localforage.getItem('books')
     books = this.bookDict2List(bookData)
     // 一本书都没勾选时的处理
     if (!books.length) {
