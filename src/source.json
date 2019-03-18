@@ -30,7 +30,18 @@
         ],
         "type": "rst"
     },
-    "ruter/ruter.github.io/master":{
+    "ProtoTeam/blog/master": {
+        "name": "蚂蚁数据体验技术团队博客",
+        "chapterPath": [
+            ".",
+            "__DIR__"
+        ],
+        "tags": [
+            "python"
+        ],
+        "type": "md"
+    },
+    "ruter/ruter.github.io/master": {
         "name": "Ruter的博客",
         "chapterPath": [
             "_posts"

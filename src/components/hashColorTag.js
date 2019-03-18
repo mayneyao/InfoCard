@@ -23,13 +23,13 @@ const hashColorMap = [
     '#ff5722',
 ]
 
-export const getHashColor = (tag) =>{
+export const getHashColor = (tag) => {
     return hashColorMap[Math.abs(Math.ceil(tag.hashCode())) % 7]
 }
 
 const ColorfulTag = (props) => {
-    let color = getHashColor(props.tag)
-    return (  <div style={{
+    let color = props.href ? '#fff' : getHashColor(props.tag)
+    return (<div style={{
         background: color,
         color: '#fff',
         display: 'flex',
@@ -44,9 +44,9 @@ const ColorfulTag = (props) => {
         fontWeight: '400',
         margin: '0px 6px 6px 0px',
     }}>{
-            props.tag
+            props.href ? <a href={props.href} target={props.target || "_blank"}>{props.tag}</a> : props.tag
         }</div>)
-      
+
 }
 
 export default ColorfulTag

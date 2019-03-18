@@ -10,7 +10,6 @@ import localforage from 'localforage';
 import Config from './components/config';
 import Tag from './components/hashColorTag';
 import Loading from './loading.svg'
-
 import 'highlight.js/styles/github.css';
 
 const styles = theme => ({
@@ -153,8 +152,25 @@ class App extends Component {
       }
     })
   }
-  componentDidMount() {
-    this.fetchData()
+
+  fixGithubImages = () => {
+    let images = document.querySelectorAll('#card img')
+
+    const { book: { userName, repoName, branchName } } = this.state
+
+    images.forEach(element => {
+      let src = element.getAttribute('src')
+      if (src.startsWith("/")) {
+        element.setAttribute('src', `https://raw.githubusercontent.com/${userName}/${repoName}/${branchName}${src}`)
+      }
+    })
+  }
+  componentDidUpdate() {
+    this.fixGithubImages()
+  }
+  async componentDidMount() {
+    await this.fetchData()
+    this.fixGithubImages()
   }
 
   render() {
@@ -173,30 +189,16 @@ class App extends Component {
           loading ? <div style={{ display: 'flex', alignItems: 'center', width: '100%', height: '100%' }}>
             <img src={Loading} style={{ margin: '0 auto' }} />
           </div> : isFetchDataOk ?
-              <div>
+              <div id="card">
                 <div style={{ display: 'flex', marginTop: '2em' }}>
                   <Tag tag={book.name} />
                   {
                     book.tags && book.tags.map(item => <Tag tag={item} key={item} />)
                   }
-                  <div style={{
-                    background: '#fff',
-                    color: '#fff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexShrink: 0,
-                    height: '24px',
-                    borderRadius: '3px',
-                    paddingLeft: '8px',
-                    paddingRight: '8px',
-                    fontSize: '14px',
-                    lineHeight: '120%',
-                    fontWeight: '400',
-                    margin: '0px 6px 6px 0px',
-                  }}><a href={url} target="_blank"> 在github中查看 </a></div>
+                  <Tag href={url} tag="在github中查看" />
                 </div>
 
-                <Paper className={classes.root} elevation={1}>
+                <Paper className={classes.root} elevation={1} >
                   <Typography component="div">
                     <Markdown source={mdSource} escapeHtml={false} />
                   </Typography>
