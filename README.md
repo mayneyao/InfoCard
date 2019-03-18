@@ -7,7 +7,7 @@
 
 ## InfoCard是什么
 
-每次打开此应用（Web页面 或 Chrome 扩展）时，InfoCard 会从 github 的开源图书中随机获取一个章节展示。
+每次打开此应用（![Web页面](https://card.gine.me/) 或 ![Chrome 扩展](https://chrome.google.com/webstore/detail/infocard/joelaehdgkmbjapdnpcfindkdkjplaka/)）时，InfoCard 会从 github 的开源图书中随机获取一个章节展示。
 
 你可以用零碎的时间阅读，这并不会花费你很多的时间，但是你可以从中学到很多。
 
