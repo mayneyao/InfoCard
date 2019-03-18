@@ -37,7 +37,7 @@
             "__DIR__"
         ],
         "tags": [
-            "python"
+            "前端"
         ],
         "type": "md"
     },
@@ -47,7 +47,8 @@
             "_posts"
         ],
         "tags": [
-            "python"
+            "python",
+            "odoo"
         ],
         "type": "md"
     }
