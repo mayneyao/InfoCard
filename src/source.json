@@ -40,16 +40,5 @@
             "前端"
         ],
         "type": "md"
-    },
-    "ruter/ruter.github.io/master": {
-        "name": "Ruter的博客",
-        "chapterPath": [
-            "_posts"
-        ],
-        "tags": [
-            "python",
-            "odoo"
-        ],
-        "type": "md"
     }
 }

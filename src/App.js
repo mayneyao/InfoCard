@@ -107,7 +107,13 @@ class App extends Component {
     let that = this
 
     let books = []
-    let bookData = await localforage.getItem('books') || await this.initBookData()
+
+    let publickBooks = await localforage.getItem('books')
+    let personalBooks = await localforage.getItem('personalBooks')
+    let allBooks = { ...publickBooks, ...personalBooks }
+    console.log(allBooks)
+    let bookData = allBooks || await this.initBookData()
+
     books = this.bookDict2List(bookData)
     // 一本书都没勾选时的处理
     if (!books.length) {
@@ -203,10 +209,10 @@ class App extends Component {
                     <Markdown source={mdSource} escapeHtml={false} />
                   </Typography>
                 </Paper>
-                <Config />
               </div>
               : <div> {fetchDataMsg ? fetchDataMsg : `oops~,something wrong!`}<span onClick={this.fetchData}>reload</span></div>
         }
+        <Config />
       </div>
     );
   }

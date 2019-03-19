@@ -12,7 +12,8 @@ import Slide from '@material-ui/core/Slide';
 import Fab from '@material-ui/core/Fab';
 import EditIcon from '@material-ui/icons/Edit';
 
-import Source from './source';
+
+import CTab from './configTab';
 
 const styles = theme => ({
     appBar: {
@@ -64,17 +65,15 @@ class FullScreenDialog extends React.Component {
                     onClose={this.handleClose}
                     TransitionComponent={Transition}
                 >
-                    <AppBar className={classes.appBar}>
-                        <Toolbar>
-                            <IconButton color="inherit" onClick={this.handleClose} aria-label="Close">
-                                <CloseIcon />
-                            </IconButton>
-                            <Typography variant="h6" color="inherit" className={classes.flex}>
-                                图书源配置
-                            </Typography>
-                        </Toolbar>
-                    </AppBar>
-                    <Source />
+                    <IconButton color="inherit" onClick={this.handleClose} aria-label="Close" style={{
+                        width: 48,
+                        position: 'fixed',
+                        zIndex: 999,
+                    }}>
+                        <CloseIcon />
+                    </IconButton>
+                    <CTab />
+
                 </Dialog>
             </div>
         );
