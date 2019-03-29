@@ -40,5 +40,13 @@
             "前端"
         ],
         "type": "md"
+    },
+    "ruanyf/weekly/master":{
+        "name": "阮一峰的每周分享",
+        "chapterPath":[
+            "docs"
+        ],
+        "tags":["周刊"],
+        "type": "md"
     }
 }
