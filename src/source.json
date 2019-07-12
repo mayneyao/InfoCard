@@ -56,5 +56,14 @@
         ],
         "tags":["周刊"],
         "type": "md"
+    },
+    "mqyqingfeng/Blog/master":{
+        "name": "冴羽的博客",
+        "chapterPath":[
+            "articles",
+            "__DIR__"
+        ],
+        "tags":["个人博客","前端"],
+        "type": "md"
     }
 }
