@@ -6,7 +6,7 @@
     "@material-ui/core": "^3.9.2",
     "@material-ui/icons": "^3.0.2",
     "github-api": "^3.0.0",
-    "highlight.js": "^9.15.6",
+    "highlight.js": "^10.4.1",
     "localforage": "^1.7.3",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
